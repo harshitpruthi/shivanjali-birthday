@@ -262,9 +262,6 @@
 <div id="progress-bar"></div>
 <div id="counter"></div>
 <button id="replay-btn" onclick="restartShow()">↺ &nbsp; Replay</button>
-<audio id="birthday-audio" preload="auto" autoplay loop playsinline>
-  <source src="/birthday-song.mp3" type="audio/mpeg">
-</audio>
 
 <script>
   const petalColors = ['#C9607A','#D4AF37','#F7C5C5','#e8a0b0','#f0d080'];
@@ -339,23 +336,6 @@
     }
   }
 
-  const birthdayAudio = document.getElementById('birthday-audio');
-  const enableAudioBtn = document.getElementById('enable-audio-btn');
-
-  function attemptAudioPlay() {
-    if(!birthdayAudio) return;
-    birthdayAudio.volume = 0.8;
-    birthdayAudio.play()
-      .then(() => { enableAudioBtn.style.display = 'none'; })
-      .catch(() => { enableAudioBtn.style.display = 'block'; });
-  }
-
-  enableAudioBtn.addEventListener('click', attemptAudioPlay);
-  document.addEventListener('visibilitychange', () => {
-    if(document.visibilityState === 'visible' && birthdayAudio.paused) attemptAudioPlay();
-  });
-
-  attemptAudioPlay();
   showSlide(0);
   timer=setTimeout(nextSlide, durations[0]);
 
