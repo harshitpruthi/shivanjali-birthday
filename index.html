@@ -262,6 +262,12 @@
 <div id="progress-bar"></div>
 <div id="counter"></div>
 <button id="replay-btn" onclick="restartShow()">↺ &nbsp; Replay</button>
+<audio id="birthday-audio" preload="auto" autoplay loop playsinline>
+  <source src="/birthday-song.mp3" type="audio/mpeg">
+</audio>
+<button id="enable-audio-btn" style="position:fixed;top:16px;right:16px;z-index:1000;padding:8px 12px;border:none;border-radius:999px;background:#D4AF37;color:#1a0a0f;font-weight:700;cursor:pointer;display:none;">
+  Play song
+</button>
 
 <script>
   const petalColors = ['#C9607A','#D4AF37','#F7C5C5','#e8a0b0','#f0d080'];
@@ -336,6 +342,23 @@
     }
   }
 
+  const birthdayAudio = document.getElementById('birthday-audio');
+  const enableAudioBtn = document.getElementById('enable-audio-btn');
+
+  function attemptAudioPlay() {
+    if(!birthdayAudio) return;
+    birthdayAudio.volume = 0.8;
+    birthdayAudio.play()
+      .then(() => { enableAudioBtn.style.display = 'none'; })
+      .catch(() => { enableAudioBtn.style.display = 'block'; });
+  }
+
+  enableAudioBtn.addEventListener('click', attemptAudioPlay);
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible' && birthdayAudio.paused) attemptAudioPlay();
+  });
+
+  attemptAudioPlay();
   showSlide(0);
   timer=setTimeout(nextSlide, durations[0]);
 
