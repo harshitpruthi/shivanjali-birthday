@@ -343,6 +343,47 @@
     if(current<total-1) { clearTimeout(timer); current++; showSlide(current);
       if(current<total-1) timer=setTimeout(nextSlide, durations[current]||4200); }
   });
+
+  // Background birthday music with robust autoplay fallbacks.
+  const birthdayAudio = document.getElementById('birthday-song');
+  if (birthdayAudio) {
+    const pixabaySources = [
+      'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1ff2.mp3?filename=happy-birthday-song-5516.mp3',
+      'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a7315b.mp3?filename=happy-birthday-to-you-piano-version-19595.mp3'
+    ];
+    let sourceIndex = 0;
+
+    function tryPlayAudio() {
+      birthdayAudio.play().catch(() => {
+        // Most browsers block sound autoplay until a gesture occurs.
+      });
+    }
+
+    // Try when media is ready and once on page load.
+    birthdayAudio.addEventListener('canplaythrough', tryPlayAudio, { once: true });
+    window.addEventListener('load', tryPlayAudio, { once: true });
+
+    // If a source fails, move to another Pixabay source.
+    birthdayAudio.addEventListener('error', () => {
+      sourceIndex += 1;
+      if (sourceIndex < pixabaySources.length) {
+        birthdayAudio.src = pixabaySources[sourceIndex];
+        birthdayAudio.load();
+        tryPlayAudio();
+      }
+    });
+
+    // Reliable first-gesture play handlers for desktop + mobile.
+    const playOnFirstGesture = () => {
+      if (birthdayAudio.paused) tryPlayAudio();
+    };
+    window.addEventListener('click', playOnFirstGesture, { once: true });
+    window.addEventListener('touchstart', playOnFirstGesture, { once: true });
+    window.addEventListener('keydown', playOnFirstGesture, { once: true });
+  }
 </script>
+<audio id="birthday-song" loop>
+  <source src="/nastelbom-happy-birthday-495860.mp3" type="audio/mpeg">
+</audio>
 </body>
 </html>
